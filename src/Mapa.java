@@ -24,7 +24,7 @@ public class Mapa {
 	 * @param listaCoordenadas que especifica la cantidad de zonas que tiene el mapa
 	 * @param mapa
 	 */
-	public Mapa(int filas, int columnas, int cantidadZonas) {
+	private Mapa(int filas, int columnas, int cantidadZonas) {
 		
 		this.filas = filas;
 		this.columnas = columnas;
@@ -36,7 +36,7 @@ public class Mapa {
 	/**
 	 * Metodo que crea un mapa rellenando la matriz
 	 */
-	public void rellenarMapa() {
+	private void rellenarMapa() {
 		//Formula secreta para rellenar el mapa
 	}
 	
@@ -56,7 +56,7 @@ public class Mapa {
 	 * Metodo Dividir en Zonas que se encarga de
 	 * agregar Coordenas a la lista de Zonas
 	 */
-	public void dividirEnZonas() {
+	private void dividirEnZonas() {
 		//Formula Secreta para agregar Zonas
 	}
 
