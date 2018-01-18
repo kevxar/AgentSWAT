@@ -44,10 +44,12 @@ public class Mapa {
 	 * Metodo que posiciona la bombar en el mapa
 	 */
 	public boolean colocarBomba(int XBomba, int YBomba) {
-		//Otra Formula secreta para rellenar el mapa
-		boolean colocado = false;
-		//Si se pudo colocar la bombar, entonces colocado igual "true"
-		return colocado;
+
+		if(this.mapa[XBomba][YBomba] != 0) {
+			return false;
+		}
+		this.mapa[XBomba][YBomba] = 1; 
+		return true;
 	}
 	
 	/**
