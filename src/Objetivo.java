@@ -16,4 +16,12 @@ public class Objetivo {
 		this.descripcion = "Soy la bomba destructora, enemigos alejaos y temed!";
 	}
 	
+	public int getCoorX() {
+		return this.x;
+	}
+	
+	public int getCoorY() {
+		return this.y;
+	}
+	
 }
