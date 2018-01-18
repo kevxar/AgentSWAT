@@ -3,6 +3,6 @@
  * @author Kevin Araya
  * @author Joaquin Solano
  */
-public class Habitacion {
+public class Zona {
 
 }
