@@ -4,50 +4,47 @@
  * @author Joaquin Solano
  */
 public class Zona {
-	private int[][] zona;
-	private int x;
-	private int y;
+	private String nombre;
+	private int xInicial;
+	private int xFinal;
+	private int yInicial;
+	private int yFinal;
 	
-	public Zona(int x, int y) {
-		this.zona = new int[x][y];
-		this.x = x;
-		this.y = y;
-	}
-	
-	/**
-	 * Rellena la matriz con 0, este representa el suelo.
-	 * 1 representa la bomba
-	 */
-	public void rellenarZona() {
-		System.out.println("Hola");
-		for(int i = 0; i < this.x ; i++) {
-			for(int j = 0; j < this.y ; j++) {
-				this.zona[i][j] = 0;
-			}
-		}
-	}
-	
-	/**
-	 * Cambia la casilla de suelo a bomba, dependiendo de las coordenadas del objetivo.
-	 * @param objetivo
-	 */
-	public void insertarObjetivo(Objetivo objetivo) {
-		this.zona[objetivo.getCoorX()][objetivo.getCoorY()] = 1;
+	public Zona(String nombre,int xInicial,int xFinal, int yInicial, int yFinal) {
+		this.nombre = nombre;
+		this.xInicial = xInicial;
+		this.xFinal = xFinal;
+		this.yInicial = yInicial;
+		this.yFinal = yFinal;
 	}
 	
 	/**
 	 * Metodo que retorna el largo de la zona
 	 * @return x
 	 */
-	public int getZonaX() {
-		return this.x;
+	public int getZonaXInicial() {
+		return this.xInicial;
 	}
-	
+
+	/**
+	 * Metodo que retorna el largo de la zona
+	 * @return x
+	 */
+	public int getZonaXFinal() {
+		return this.xFinal;
+	}
 	/**
 	 * Metodo que retorna el alto de la zona
 	 * @return y
 	 */
-	public int getZonaY() {
-		return this.y;
+	public int getZonaYInicial() {
+		return this.yInicial;
+	}
+	/**
+	 * Metodo que retorna el largo de la zona
+	 * @return x
+	 */
+	public int getZonaYFinal() {
+		return this.yFinal;
 	}
 }
