@@ -1,5 +1,5 @@
 /**
- * Clase Mapa que es
+ * Clase Mapa que contiene una matriz y un listado de coordenadas de la zonas
  * @author Baldo Morales
  * @author Kevin Araya
  * @author Joaquin Solano
@@ -13,20 +13,49 @@ public class Mapa {
 	private int columnas;
 	
 	// Lista de todas las Zonas que contiene un Mapa
-	private Zona[] listaZonas;
+	private Zona[] listaCoordenadas;
 	
+	// Matriz del mapa en donde se posicionaran la bomba
+	private int[][] mapa;
 	/**
 	 * Constructor de la clase Mapa
 	 * @param filas que es el largo del mapa
 	 * @param columnas que es el ancho del mapa 
-	 * @param cantidadZonas que especifica la cantidad de zonas que tiene el mapa
+	 * @param listaCoordenadas que especifica la cantidad de zonas que tiene el mapa
+	 * @param mapa
 	 */
 	public Mapa(int filas, int columnas, int cantidadZonas) {
 		
 		this.filas = filas;
 		this.columnas = columnas;
-		this.listaZonas = new Zona[cantidadZonas];
-		
+		this.listaCoordenadas = new Zona[cantidadZonas];
+		this.mapa = new int[filas][columnas];
+	
+	}
+	
+	/**
+	 * Metodo que crea un mapa rellenando la matriz
+	 */
+	public void rellenarMapa() {
+		//Formula secreta para rellenar el mapa
+	}
+	
+	/**
+	 * Metodo que posiciona la bombar en el mapa
+	 */
+	public boolean colocarBomba(int XBomba, int YBomba) {
+		//Otra Formula secreta para rellenar el mapa
+		boolean colocado = false;
+		//Si se pudo colocar la bombar, entonces colocado igual "true"
+		return colocado;
+	}
+	
+	/**
+	 * Metodo Dividir en Zonas que se encarga de
+	 * agregar Coordenas a la lista de Zonas
+	 */
+	public void dividirEnZonas() {
+		//Formula Secreta para agregar Zonas
 	}
 
 	/**
@@ -62,20 +91,35 @@ public class Mapa {
 	}
 
 	/**
-	 * Metodo obtener Lista de listaZonas del mapa
-	 * @return Lista listaZonas de la clase
+	 * Metodo obtener listado de coordenadas
+	 * @return listaCoordenadas de la clase
 	 */
-	public Zona[] getListaZonas() {
-		return listaZonas;
+	public Zona[] getListaCoordenadas() {
+		return listaCoordenadas;
 	}
 
 	/**
-	 * Metodo Cambiar la Lista de listaZonas del mapa
-	 * @param listaZonas cambiado por listaZonas ingresada por parametro
+	 * Metodo Cambiar Columna del mapa
+	 * @param listaCoordenadas cambiado por listaCoordenadas ingresada por parametro
 	 */
-	public void setListaZonas(Zona[] listaZonas) {
-		this.listaZonas = listaZonas;
+	public void setListaCoordenadas(Zona[] listaCoordenadas) {
+		this.listaCoordenadas = listaCoordenadas;
 	}
 
+	/**
+	 * Metodo obtener matriz mapa
+	 * @return mapa matriz de la clase
+	 */
+	public int[][] getMapa() {
+		return mapa;
+	}
+
+	/**
+	 * Metodo Cambiar mapa
+	 * @param mapa cambiado por una matriz mapa ingresada por parametro
+	 */
+	public void setMapa(int[][] mapa) {
+		this.mapa = mapa;
+	}
 	
 }
