@@ -10,10 +10,13 @@ public class AgenteLider extends Agent {
 	private Sistema sistema;
 	private Mision mision;
 	private Zona[] listaCoordenadas;
+	private SwatGui gui;
 	
 	protected void setup() {
 		System.out.println("Holi soy el lider");
 		sistema = new Sistema(this);
+		gui = new SwatGui(this);
+		gui.showGui();
 	}
 	
 	public void obtenerMision(Mision mis) {
