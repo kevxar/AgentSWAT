@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 /**
  * Clase Mapa que contiene una matriz y un listado de coordenadas de la zonas
  * @author Baldo Morales
@@ -62,9 +64,49 @@ public class Mapa {
 	 * agregar Coordenas a la lista de Zonas
 	 */
 	private void dividirEnZonas() {
-		//Formula Secreta para agregar Zonas
+		Stack<Zona> pila = new Stack<Zona>();
+		int cantidadHabitacionesTotales = 1;
+		Zona zona = new Zona("1",0,columnas,0,filas);
+		pila.push(zona);
+		boolean esColumna = true;
+		while(cantidadHabitacionesTotales != listaCoordenadas.length) {
+			Zona zona2 = pila.pop();
+			if(esColumna) {
+				int mitad = (zona2.getZonaXFinal()-zona2.getZonaXInicial())/2;
+				Zona Aux1 = new Zona("2",
+						zona2.getZonaXInicial(),
+						zona2.getZonaXFinal()-mitad,
+						zona2.getZonaYInicial(),
+						zona2.getZonaYFinal());
+				Zona Aux2 = new Zona("3",
+						zona2.getZonaXInicial()+mitad+1,
+						zona2.getZonaXFinal(),
+						zona2.getZonaYInicial(),
+						zona2.getZonaYFinal());
+				esColumna = false;
+				pila.push(Aux1);
+				pila.push(Aux2);
+				cantidadHabitacionesTotales++;
+			} else {
+				int mitad = (zona2.getZonaYFinal()-zona2.getZonaYInicial())/2;
+				Zona Aux1 = new Zona("4",
+						zona2.getZonaXInicial(),
+						zona2.getZonaXFinal(),
+						zona2.getZonaYInicial(),
+						zona2.getZonaYFinal()-mitad);
+				Zona Aux2 = new Zona("5",
+						zona2.getZonaXInicial(),
+						zona2.getZonaXFinal(),
+						zona2.getZonaYInicial()+mitad+1,
+						zona2.getZonaYFinal());
+				esColumna = true;
+				pila.push(Aux1);
+				pila.push(Aux2);
+				cantidadHabitacionesTotales++;
+			}
+		}
 	}
-
+	
 	/**
 	 * Metodo obtener Fila del mapa
 	 * @return filas de la clase
