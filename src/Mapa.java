@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.Stack;
 
 /**
@@ -64,13 +66,13 @@ public class Mapa {
 	 * agregar Coordenas a la lista de Zonas
 	 */
 	private void dividirEnZonas() {
-		Stack<Zona> pila = new Stack<Zona>();
+		Queue<Zona> cola = new LinkedList<Zona>();
 		int cantidadHabitacionesTotales = 1;
 		Zona zona = new Zona("1",0,columnas,0,filas);
-		pila.push(zona);
+		cola.add(zona);
 		boolean esColumna = true;
 		while(cantidadHabitacionesTotales != listaCoordenadas.length) {
-			Zona zona2 = pila.pop();
+			Zona zona2 = cola.poll();
 			if(esColumna) {
 				int mitad = (zona2.getZonaXFinal()-zona2.getZonaXInicial())/2;
 				Zona Aux1 = new Zona("2",
@@ -84,8 +86,8 @@ public class Mapa {
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal());
 				esColumna = false;
-				pila.push(Aux1);
-				pila.push(Aux2);
+				cola.add(Aux1);
+				cola.add(Aux2);
 				cantidadHabitacionesTotales++;
 			} else {
 				int mitad = (zona2.getZonaYFinal()-zona2.getZonaYInicial())/2;
@@ -100,10 +102,13 @@ public class Mapa {
 						zona2.getZonaYInicial()+mitad+1,
 						zona2.getZonaYFinal());
 				esColumna = true;
-				pila.push(Aux1);
-				pila.push(Aux2);
+				cola.add(Aux1);
+				cola.add(Aux2);
 				cantidadHabitacionesTotales++;
 			}
+		}
+		for(int i = 0; i < this.listaCoordenadas.length; i++) {
+			listaCoordenadas[i] = cola.poll();
 		}
 	}
 	
