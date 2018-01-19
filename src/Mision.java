@@ -7,9 +7,8 @@ public class Mision {
 	private Mapa mapa;
 	private Objetivo objetivo;
 	
-	public Mision(Mapa mapa) {
-		this.mapa = mapa;
-		
+	public Mision(int x, int y, int cantidadZonas) {
+		generarMapa(x,y,cantidadZonas);		
 		fijarObjetivo(this.objetivo);
 	}
 	
@@ -32,5 +31,11 @@ public class Mision {
 		this.objetivo = new Objetivo(randomX,randomY);	
 	}
 	
+	private void generarMapa(int x, int y, int cantidadZonas) {
+		
+		this.mapa = new Mapa(x,y,cantidadZonas);
+		
+		
+	}
 	
 }

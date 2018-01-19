@@ -24,20 +24,25 @@ public class Mapa {
 	 * @param listaCoordenadas que especifica la cantidad de zonas que tiene el mapa
 	 * @param mapa
 	 */
-	private Mapa(int filas, int columnas, int cantidadZonas) {
+	public Mapa(int filas, int columnas, int cantidadZonas) {
 		
 		this.filas = filas;
 		this.columnas = columnas;
 		this.listaCoordenadas = new Zona[cantidadZonas];
 		this.mapa = new int[filas][columnas];
-	
+		rellenarMapa();
+		dividirEnZonas();
 	}
 	
 	/**
 	 * Metodo que crea un mapa rellenando la matriz
 	 */
 	private void rellenarMapa() {
-		//Formula secreta para rellenar el mapa
+		for(int i = 0; i < this.filas ; i++) {
+			for(int j = 0 ;  j < this.columnas ; j++) {
+				this.mapa[i][j] = 0;
+			}
+		}
 	}
 	
 	/**
