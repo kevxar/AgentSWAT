@@ -9,18 +9,29 @@ import jade.core.behaviours.OneShotBehaviour;
 public class AgenteLider extends Agent {
 	private Sistema sistema;
 	private Mision mision;
+	private Zona[] listaCoordenadas;
 	
 	protected void setup() {
 		System.out.println("Holi soy el lider");
 		sistema = new Sistema(this);
-		
 	}
 	
 	public void obtenerMision(Mision mis) {
 		addBehaviour(new OneShotBehaviour() {
 			public void action() {
-				mision = mis;				
+				mision = mis;	
+				listaCoordenadas = mision.getMapa().getListaCoordenadas();
 				System.out.println("He obtenido la misión!");
+				System.out.println("Las coordenadas de las zonas son:");
+			
+				for(int i=0;i<listaCoordenadas.length;i++) {
+					System.out.print("Zona x inicial: "+ listaCoordenadas[i].getZonaXInicial()+"  ");
+					System.out.print("Zona x final: "+ listaCoordenadas[i].getZonaXFinal()+"  ");
+					System.out.print("Zona y inicial: "+ listaCoordenadas[i].getZonaYInicial()+"  ");
+					System.out.print("Zona y final: "+ listaCoordenadas[i].getZonaYFinal()+"  ");
+					System.out.println("");
+				}
+				
 			}
 	});
 	}
