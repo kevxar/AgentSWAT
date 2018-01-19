@@ -38,4 +38,12 @@ public class Mision {
 		
 	}
 	
+	public Mapa getMapa() {
+		return this.mapa;
+	}
+	
+	public Objetivo getobjetivo() {
+		return this.objetivo;
+	}
+	
 }
