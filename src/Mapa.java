@@ -70,6 +70,7 @@ public class Mapa {
 		int cantidadHabitacionesTotales = 1;
 		Zona zona = new Zona("1",0,columnas,0,filas);
 		cola.add(zona);
+		int cont = 0; int pos = 1; int fina = 1;
 		boolean esColumna = true;
 		while(cantidadHabitacionesTotales != listaCoordenadas.length) {
 			Zona zona2 = cola.poll();
@@ -85,7 +86,14 @@ public class Mapa {
 						zona2.getZonaXFinal(),
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal());
-				esColumna = false;
+				if(pos>=fina) {
+					esColumna = false;
+					cont++;
+					fina = (int) Math.pow(2, cont);
+				} else {
+					pos++;
+				}
+				
 				cola.add(Aux1);
 				cola.add(Aux2);
 				cantidadHabitacionesTotales++;
@@ -101,7 +109,13 @@ public class Mapa {
 						zona2.getZonaXFinal(),
 						zona2.getZonaYInicial()+mitad+1,
 						zona2.getZonaYFinal());
-				esColumna = true;
+				if(pos>=fina) {
+					esColumna = false;
+					cont++;
+					fina = (int) Math.pow(2, cont);
+				} else {
+					pos++;
+				}
 				cola.add(Aux1);
 				cola.add(Aux2);
 				cantidadHabitacionesTotales++;
