@@ -23,7 +23,7 @@ public class Mapa {
 	private int[][] mapa;
 	
 	//Instancia de la clase Mapa
-	private static volatile Mapa instancia = null;
+	private static Mapa instancia = null;
 	/**
 	 * Constructor de la clase Mapa
 	 * @param filas que es el largo del mapa
@@ -46,13 +46,11 @@ public class Mapa {
 		dividirEnZonas();
 	}
 	
-	public static Mapa getInstancia() {
-        if (instancia == null) {
-            synchronized(Mapa.class) {
+	public synchronized static Mapa getInstancia() {
+        if (instancia == null) {            
                 if (instancia == null) {
                     instancia = new Mapa();
                 }
-            }
         }
         return instancia;
     }
@@ -193,5 +191,8 @@ public class Mapa {
 		this.listaCoordenadas = listaCoordenadas;
 	}
 
+	public int[][] getMapa() {
+		return this.mapa;
+	}
 	
 }

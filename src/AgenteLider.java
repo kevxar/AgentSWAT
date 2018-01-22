@@ -112,40 +112,33 @@ public class AgenteLider extends Agent {
 				
 		public void action() {
 			
-				// Envia el request a todas las unidades
-				ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
+			System.out.println("Comienzo a distribuir las unidades:");
+			// Envia el request a todas las unidades
+			ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
+			
+				for (int i = 0; i < listaCoordenadas.length; ++i) {
+					System.out.println("A unidad numero " + i +":" );
+					//Consulta si la lista de zonas es menor a la lista de unidades
 				
-					for (int i = 0; i < listaCoordenadas.length; ++i) {
+						System.out.println("PASE POR AQUI");
+						//Agrego la unidad a la lista de unidades
+						req.addReceiver(listaUnidades[i]);
 						
-						//Consulta si la lista de zonas es menor a la lista de unidades
-						if(i < listaUnidades.length) {
-							//Agrego la unidad a la lista de unidades
-							req.addReceiver(listaUnidades[i]);
-							
-							req.setConversationId("envio-zona");
-							req.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
-							myAgent.send(req);
-						}else {
-								
-							req.addReceiver(new AID("unidad"+(i+1),AID.ISLOCALNAME));
-							//Seteo el contenido del mensaje con la zona 
-							try {
-								req.setContentObject((Serializable) listaCoordenadas[i]);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							
-							req.setConversationId("envio-zona");
-							req.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
-							myAgent.send(req);
-	
-					}
-					
+						String coordenadas = listaCoordenadas[i].getZonaXInicial()+","+listaCoordenadas[i].getZonaYInicial()+","+listaCoordenadas[i].getZonaXFinal()+","+listaCoordenadas[i].getZonaYFinal();
+						
+						//Seteo el contenido del mensaje con la zona 
+						req.setContent(coordenadas);
+						
+						req.setConversationId("envio-zona");
+						req.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
+						myAgent.send(req);
+
 				}
-					// Preparo el template para obtener respuesta
-					mt = MessageTemplate.and(MessageTemplate.MatchConversationId("envio-zona"),
-							MessageTemplate.MatchInReplyTo(req.getReplyWith()));
-					addBehaviour(new ReunirUnidad());
+				
+				// Preparo el template para obtener respuesta
+				mt = MessageTemplate.and(MessageTemplate.MatchConversationId("envio-zona"),
+						MessageTemplate.MatchInReplyTo(req.getReplyWith()));
+				addBehaviour(new ReunirUnidad());
 		}		
 			
 		
@@ -179,6 +172,9 @@ public class AgenteLider extends Agent {
 						respuesta.addReceiver(listaUnidades[i]);
 						
 						//Seteo el contenido del mensaje con la zona 
+						//HAY QUE CAMBIARLO SI O SI O EXPLOTARA
+						//HAY QUE CAMBIARLO SI O SI O EXPLOTARA
+						//HAY QUE CAMBIARLO SI O SI O EXPLOTARA
 						try {
 							respuesta.setContentObject((Serializable) listaCoordenadas[posicion]);
 						} catch (IOException e) {

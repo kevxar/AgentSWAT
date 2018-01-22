@@ -22,9 +22,6 @@ public class AgenteUnidad extends Agent {
 	// Variable nombre que contiene el nombre del agente.
 	private String nombre;
 	
-	// Matriz perimetro que contiene un sector del mapa original.
-	private int[][] perimetro;
-	
 	// Variable estado que contiene los 3 estados del agente "despejado", "encontrado" y "desactivado".
 	private String estado;
 	
@@ -36,6 +33,7 @@ public class AgenteUnidad extends Agent {
 	 * Setup que inicializa el agente Unidad.
 	 */
 	protected void setup() {
+		//perimetro = Mapa.getInstancia().getMapa();
 		nombre = this.getLocalName();
 		//Se añade el servicio de disponibilidad de Unidad SWAT
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -50,6 +48,7 @@ public class AgenteUnidad extends Agent {
 			fe.printStackTrace();
 		}
 		System.out.println("Unidad: "+nombre+" disponible para la mision.");
+		addBehaviour(new revisarPerimetro());
 	}
 	/**
 	 * Cuando el Agente manda un mensaje al irse
@@ -67,22 +66,24 @@ public class AgenteUnidad extends Agent {
 	 */
 	private class revisarPerimetro extends CyclicBehaviour{
 		public void action() {
+			System.out.println("A " + nombre + " le llego un mensaje");
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 			ACLMessage msg = myAgent.receive(mt);
 			// Se verifica si el mensaje esta vacio.
 			if(msg != null) {
-				try {
-					perimetro = (int[][]) msg.getContentObject();
-				} catch (UnreadableException e) {
-					e.printStackTrace();
-				}
+				String coordenadas = msg.getContent();
+				String[] partes = coordenadas.split(",");
+				int xInicial = Integer.parseInt(partes[0]);
+				int yInicial = Integer.parseInt(partes[1]);
+				int xFinal = Integer.parseInt(partes[2]);
+				int yFinal = Integer.parseInt(partes[3]);
 				// Se inicia el estado como despejado.
 				estado = "despejado";
 				
-				for(int i = 0; i < perimetro.length ; i++) {
-					for(int j = 0; j < perimetro[0].length; j++) {
+				for(int i = xInicial; i < xFinal ; i++) {
+					for(int j = yInicial; j < yFinal; j++) {
 						// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
-						if(perimetro[i][j] == 1) {
+						if(Mapa.getInstancia().getMapa()[i][j] == 1) {
 							estado = "encontrado";
 							bombaX = i;
 							bombaY = j;
