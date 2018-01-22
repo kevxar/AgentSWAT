@@ -122,13 +122,6 @@ public class AgenteLider extends Agent {
 							//Agrego la unidad a la lista de unidades
 							req.addReceiver(listaUnidades[i]);
 							
-							//Seteo el contenido del mensaje con la zona 
-							try {
-								req.setContentObject((Serializable) listaCoordenadas[i]);
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							
 							req.setConversationId("envio-zona");
 							req.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
 							myAgent.send(req);

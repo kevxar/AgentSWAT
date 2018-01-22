@@ -8,7 +8,8 @@ public class Mision {
 	private Objetivo objetivo;
 	
 	public Mision(int x, int y, int cantidadZonas) {
-		generarMapa(x,y,cantidadZonas);		
+		mapa = Mapa.getInstancia();
+		mapa.setMapa(x,y,cantidadZonas);		
 		fijarObjetivo(this.objetivo);
 	}
 	
@@ -31,15 +32,9 @@ public class Mision {
 		this.objetivo = new Objetivo(randomX,randomY);	
 	}
 	
-	private void generarMapa(int x, int y, int cantidadZonas) {
-		
-		this.mapa = new Mapa(x,y,cantidadZonas);
-		
-		
-	}
 	
 	public Mapa getMapa() {
-		return this.mapa;
+		return this.mapa.getInstancia();
 	}
 	
 	public Objetivo getobjetivo() {

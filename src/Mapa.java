@@ -21,6 +21,9 @@ public class Mapa {
 	
 	// Matriz del mapa en donde se posicionaran la bomba
 	private int[][] mapa;
+	
+	//Instancia de la clase Mapa
+	private static volatile Mapa instancia = null;
 	/**
 	 * Constructor de la clase Mapa
 	 * @param filas que es el largo del mapa
@@ -28,7 +31,12 @@ public class Mapa {
 	 * @param listaCoordenadas que especifica la cantidad de zonas que tiene el mapa
 	 * @param mapa
 	 */
-	public Mapa(int filas, int columnas, int cantidadZonas) {
+	
+	private Mapa() {
+		
+	}
+	
+	public void setMapa(int filas, int columnas, int cantidadZonas) {
 		
 		this.filas = filas;
 		this.columnas = columnas;
@@ -37,6 +45,17 @@ public class Mapa {
 		rellenarMapa();
 		dividirEnZonas();
 	}
+	
+	public static Mapa getInstancia() {
+        if (instancia == null) {
+            synchronized(Mapa.class) {
+                if (instancia == null) {
+                    instancia = new Mapa();
+                }
+            }
+        }
+        return instancia;
+    }
 	
 	/**
 	 * Metodo que crea un mapa rellenando la matriz
@@ -174,20 +193,5 @@ public class Mapa {
 		this.listaCoordenadas = listaCoordenadas;
 	}
 
-	/**
-	 * Metodo obtener matriz mapa
-	 * @return mapa matriz de la clase
-	 */
-	public int[][] getMapa() {
-		return mapa;
-	}
-
-	/**
-	 * Metodo Cambiar mapa
-	 * @param mapa cambiado por una matriz mapa ingresada por parametro
-	 */
-	public void setMapa(int[][] mapa) {
-		this.mapa = mapa;
-	}
 	
 }
