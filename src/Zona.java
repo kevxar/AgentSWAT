@@ -47,4 +47,18 @@ public class Zona {
 	public int getZonaYFinal() {
 		return this.yFinal;
 	}
+	/**
+	 * Metodo que da un nombre a la zona
+	 * @param nombre
+	 */
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+	/**
+	 * Metodo que devuelve el nombre de la zona
+	 * @return
+	 */
+	public String getNombre() {
+		return this.nombre;
+	}
 }

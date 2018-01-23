@@ -141,6 +141,10 @@ public class Mapa {
 		for(int i = 0; i < this.listaCoordenadas.length; i++) {
 			listaCoordenadas[i] = cola.poll();
 		}
+		//Setea el nombre de todas las zonas, partiendo en zona1
+		for(int i = 0; i < this.listaCoordenadas.length; i++) {
+			listaCoordenadas[i].setNombre("zona"+i+1);
+		}
 	}
 	
 	/**

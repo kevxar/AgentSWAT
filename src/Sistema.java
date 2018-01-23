@@ -22,6 +22,7 @@ public class Sistema {
 		
 		lid.obtenerMision(mision);
 		
+		
 	}
 	
 	

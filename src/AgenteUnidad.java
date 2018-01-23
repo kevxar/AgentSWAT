@@ -73,10 +73,11 @@ public class AgenteUnidad extends Agent {
 			if(msg != null) {
 				String coordenadas = msg.getContent();
 				String[] partes = coordenadas.split(",");
-				int xInicial = Integer.parseInt(partes[0]);
-				int yInicial = Integer.parseInt(partes[1]);
-				int xFinal = Integer.parseInt(partes[2]);
-				int yFinal = Integer.parseInt(partes[3]);
+				String zona = partes[0];
+				int xInicial = Integer.parseInt(partes[1]);
+				int yInicial = Integer.parseInt(partes[2]);
+				int xFinal = Integer.parseInt(partes[3]);
+				int yFinal = Integer.parseInt(partes[4]);
 				// Se inicia el estado como despejado.
 				estado = "despejado";
 				
@@ -87,7 +88,7 @@ public class AgenteUnidad extends Agent {
 							estado = "encontrado";
 							bombaX = i;
 							bombaY = j;
-							System.out.println("Agente "+nombre+" reviso la zona ("+i+","+j+") y encontro la bomba");
+							System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
 							
 							break;
 						}
