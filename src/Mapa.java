@@ -207,27 +207,11 @@ public class Mapa {
 	}
 
 	/**
-	 * Metodo Cambiar Fila del mapa
-	 * @param filas cambiado por filas ingresada por parametro
-	 */
-	public void setFilas(int filas) {
-		this.filas = filas;
-	}
-
-	/**
 	 * Metodo obtener Columna del mapa
 	 * @return columnas de la clase
 	 */
 	public int getColumnas() {
 		return columnas;
-	}
-
-	/**
-	 * Metodo Cambiar Columna del mapa
-	 * @param columnas cambiado por columnas ingresada por parametro
-	 */
-	public void setColumnas(int columnas) {
-		this.columnas = columnas;
 	}
 
 	/**
@@ -238,14 +222,6 @@ public class Mapa {
 		return listaCoordenadas;
 	}
 
-	/**
-	 * Metodo Cambiar Columna del mapa
-	 * @param listaCoordenadas cambiado por listaCoordenadas ingresada por parametro
-	 */
-	public void setListaCoordenadas(Zona[] listaCoordenadas) {
-		this.listaCoordenadas = listaCoordenadas;
-	}
-	
 	/**
 	 * Metodo para obtener la matriz del mapa
 	 * @return
