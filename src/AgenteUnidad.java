@@ -66,9 +66,6 @@ public class AgenteUnidad extends Agent {
 	 * Metodo que le confirma mediante mensaje al Lider de su reclutamiento.
 	 * El lider mediante un mensaje recluta a la unidad, la cual esta al tanto de su bandeja de mensajes.
 	 * Si no obtiene mensajes de performative confirmar, se bloquea.
-	 * @author Baldo Morales
-	 * @author Kevin Araya
-	 * @author Joaquin Solano
  	 */
 	private class respuestaInstancia extends CyclicBehaviour{
 		
@@ -91,9 +88,6 @@ public class AgenteUnidad extends Agent {
 	 * ciclico que espera una solicitud del lider,
 	 * revisa en una matriz si existe un objeto dentro de las casillas,
 	 * cuando termine la evaluación procedera a notificar el estado.
-	 * @author Baldo Morales
-	 * @author Kevin Araya
-	 * @author Joaquin Solano
  	 */
 	private class revisarPerimetro extends CyclicBehaviour{
 		public void action() {
@@ -143,9 +137,6 @@ public class AgenteUnidad extends Agent {
 
 	/**
 	 * Clase Notificar Estado que informa al lider con el String estado.
-	 * @author Baldo Morales
-	 * @author Kevin Araya
-	 * @author Joaquin Solano
  	 */
 	private class notificarEstado extends CyclicBehaviour{ 
 		public void action() {

@@ -29,18 +29,22 @@ public class AgenteLider extends Agent {
 	private String nombre;
 	private AID[] listaUnidades;
 
-
-
+	/**
+	 * Setup que inicializa el agente Lider.
+	 */
 	protected void setup() {
 		System.out.println("Hola, soy el lider");
 		sistema = new Sistema(this);
 		gui = new SwatGui(this);
 		gui.showGui();
-
-
 		addBehaviour(new ReclutarUnidad());
-
 	}
+	
+	/**
+	 * Metodo que obtiene la mision por parte de Sistema.
+	 * Luego, imprime las coordenadas de cada Zona.
+	 * @param mis
+	 */
 	public void obtenerMision(Mision mis) {
 		addBehaviour(new OneShotBehaviour() {
 			public void action() {
@@ -50,19 +54,21 @@ public class AgenteLider extends Agent {
 				System.out.println("Las coordenadas de las zonas son:");
 
 				for(int i=0;i<listaCoordenadas.length;i++) {
-					System.out.print("Zona x inicial: "+ listaCoordenadas[i].getZonaXInicial()+"  ");
-					System.out.print("Zona x final: "+ listaCoordenadas[i].getZonaXFinal()+"  ");
-					System.out.print("Zona y inicial: "+ listaCoordenadas[i].getZonaYInicial()+"  ");
-					System.out.print("Zona y final: "+ listaCoordenadas[i].getZonaYFinal()+"  ");
+					System.out.print(listaCoordenadas[i].getNombre()+ ": x inicial: "+ listaCoordenadas[i].getZonaXInicial()+"  ");
+					System.out.print(" x final: "+ listaCoordenadas[i].getZonaXFinal()+"  ");
+					System.out.print(" y inicial: "+ listaCoordenadas[i].getZonaYInicial()+"  ");
+					System.out.print(" y final: "+ listaCoordenadas[i].getZonaYFinal()+"  ");
 					System.out.println("");
 				}
-
 			}
 		});
-
 	}
 
-
+	/**
+	 * Metodo que instancia AgenteUnidad dependiendo de la cantidad de zonas que tiene el mapa.
+	 * Luego,recluta a las unidades a traves del DF.
+	 * Metodo ocupa un Switch el cual se repite hasta avanzar al otro paso.
+	 */
 	private class ReclutarUnidad extends Behaviour{
 		private int cont = 0;
 		private int paso = 0;
@@ -82,7 +88,7 @@ public class AgenteLider extends Agent {
 			case 1:
 				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 				if(!respondio) {
-
+					//Envia un mensaje a las unidades recien creadas.
 					ACLMessage req = new ACLMessage(ACLMessage.CONFIRM);
 					req.setContent("Listo");
 					req.addReceiver(new AID ("unidad"+(cont+1),AID.ISLOCALNAME));
@@ -91,18 +97,19 @@ public class AgenteLider extends Agent {
 					myAgent.send(req);
 					respondio = true;
 				}
-
-
+				//Si se recibio respuesta, se suma el contador de unidades instanciadas.
 				ACLMessage respuesta = myAgent.receive(mt);
 				if(respuesta!=null) {
 					cont++;
 					respondio = false;
 				}
+				//Si el contador es igual a la cantidad de zonas, se da inicio al paso 2.
 				if(cont == listaCoordenadas.length) {	
 					paso = 2;
 				}
 				break;
 			case 2:
+				//Busca en el DF a traves del tipo "unidad-swat" a todos los agentes que presten este servicio
 				DFAgentDescription template = new DFAgentDescription();
 				ServiceDescription sd = new ServiceDescription();
 				sd.setType("unidad-swat");
@@ -119,7 +126,7 @@ public class AgenteLider extends Agent {
 
 					e.printStackTrace();
 				}
-				// Perform the request
+				// Se da paso al comportamiento de distribuir unidades.
 				myAgent.addBehaviour(new DistribuirUnidades());
 
 				paso = 3;
@@ -134,12 +141,9 @@ public class AgenteLider extends Agent {
 
 	}
 
-
-
 	private class DistribuirUnidades extends OneShotBehaviour {
-		private int contadorRespuestas = 0; // The counter of replies from seller agents
-		private MessageTemplate mt; // The template to receive replies
-
+		private int contadorRespuestas = 0; 
+		private MessageTemplate mt; 
 
 		public void action() {
 
@@ -148,32 +152,31 @@ public class AgenteLider extends Agent {
 			ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
 
 			for (int i = 0; i < listaCoordenadas.length; ++i) {
-				System.out.println("A unidad numero " + (i+1) +":" );
+				//Se limpia la lista de receptores, para evitar problemas de sincronizacion
 				req.clearAllReceiver();
 				//Agrego la unidad a la lista de unidades
 				req.addReceiver(listaUnidades[i]);
 				
 				String coordenadas = listaCoordenadas[i].getNombre()+","+listaCoordenadas[i].getZonaXInicial()+","+listaCoordenadas[i].getZonaYInicial()+","+listaCoordenadas[i].getZonaXFinal()+","+listaCoordenadas[i].getZonaYFinal();
-				//System.out.println(coordenadas);
 				//Seteo el contenido del mensaje con la zona 
 				req.setContent(coordenadas);
 
 				req.setConversationId("envio-zona");
 				req.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
 				myAgent.send(req);
-
 			}
-			
 			// Preparo el template para obtener respuesta
-			mt = MessageTemplate.and(MessageTemplate.MatchConversationId("envio-zona"),
-					MessageTemplate.MatchInReplyTo(req.getReplyWith()));
+			//mt = MessageTemplate.and(MessageTemplate.MatchConversationId("envio-zona"),
+				//	MessageTemplate.MatchInReplyTo(req.getReplyWith()));
 			addBehaviour(new ReunirUnidad());
 		}		
-
-
-
 	}
 
+	/**
+	 * Metodo que recibe un mensaje de performative inform, el cual le informa a las demas unidades
+	 * que la bomba se encuentra en cierto mapa, entregando las coordenadas para desactivar el objeto.
+	 *
+	 */
 	private class ReunirUnidad extends CyclicBehaviour {
 		private int cont = 0;
 		public void action() {
@@ -184,7 +187,6 @@ public class AgenteLider extends Agent {
 				String estado = respuesta.getContent();
 				int posicion=0;
 				if(estado.equalsIgnoreCase("encontrado")) {
-					//System.out.println("encontrado");
 					AID unidad = respuesta.getSender();
 					String nombre = unidad.getLocalName();
 
@@ -195,42 +197,35 @@ public class AgenteLider extends Agent {
 							break;
 						}
 					}
-
 					for(int i=0; i<listaUnidades.length;i++) {
-						//if(i != posicion) {
-						//System.out.println("mandar");
-
 						ACLMessage reply = respuesta.createReply();
 						reply.setPerformative(ACLMessage.INFORM);
 						reply.addReceiver(listaUnidades[i]);
 						String coordenadas = listaCoordenadas[posicion].getNombre()+","+listaCoordenadas[posicion].getZonaXInicial()+","+listaCoordenadas[posicion].getZonaYInicial()+","+listaCoordenadas[posicion].getZonaXFinal()+","+listaCoordenadas[posicion].getZonaYFinal();
-						//System.out.println(coordenadas);
 						//Seteo el contenido del mensaje con la zona 
 						reply.setContent(coordenadas);
 
 						reply.setConversationId("envio-zona");
 						reply.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
 						myAgent.send(reply);
-
-						//}
 					}
-
 				}else 
 					if(estado.equalsIgnoreCase("desactivado")) {
-						//System.out.println("desactivado");
 						cont++;
 						if(cont == listaCoordenadas.length) {
-							//System.out.println("listo");
 							addBehaviour(new ReportarMision());
 						}	
 					}
-
 			}else {
 				block();
 			}
 		}
 	}
 
+	/**
+	 * Metodo que reporta el estado final de la mision y termina con la vida del lider.
+	 *
+	 */
 	private class ReportarMision extends OneShotBehaviour{
 
 		public void action() {
@@ -240,9 +235,13 @@ public class AgenteLider extends Agent {
 
 	}
 
+	/**
+	 * Metodo correspondiende a Agente
+	 * Se modifica para enviar un mensaje de despedida.
+	 */
 	protected void takeDown() {
 
-		System.out.println(getAID().getLocalName() +" se despide.");
+		System.out.println(getAID().getLocalName() +" termina sus servicios, equipo SWAT se despide.");
 	}
 
 }
