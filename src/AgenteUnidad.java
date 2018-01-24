@@ -90,47 +90,55 @@ public class AgenteUnidad extends Agent {
 			ACLMessage msg = myAgent.receive(mt);
 			// Se verifica si el mensaje esta vacio.
 			if(msg != null) {
-				String coordenadas = msg.getContent();
-				String[] partes = coordenadas.split(",");
-				String zona = partes[0];
-				int xInicial = Integer.parseInt(partes[1]);
-				int yInicial = Integer.parseInt(partes[2]);
-				int xFinal = Integer.parseInt(partes[3]);
-				int yFinal = Integer.parseInt(partes[4]);
-				String obj = partes[5];
-				// Se inicia el estado como despejado.
-				estado = "despejado";
+				if(msg.getPerformative() == ACLMessage.REQUEST) {
+					String coordenadas = msg.getContent();
+					String[] partes = coordenadas.split(",");
+					String zona = partes[0];
+					int xInicial = Integer.parseInt(partes[1]);
+					int yInicial = Integer.parseInt(partes[2]);
+					int xFinal = Integer.parseInt(partes[3]);
+					int yFinal = Integer.parseInt(partes[4]);
+					String obj = partes[5];
+					// Se inicia el estado como despejado.
+					estado = "despejado";
 
-				for(int i = xInicial; i < xFinal ; i++) {
-					for(int j = yInicial; j < yFinal; j++) {
-						// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
-						//System.out.println("("+i+","+j+")->"+Mapa.getInstancia().getMapa()[i][j]);
-						if(Mapa.getInstancia().getMapa()[i][j] == 1) {
-							System.out.println(obj);
-							if(obj.equalsIgnoreCase("R")) {
-								estado = "encontrado";
-								bombaX = i;
-								bombaY = j;
-								System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
-							} else {
-								estado = "desactivado";
-								bombaX = i;
-								bombaY = j;
-								System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y desactivo la bomba");
+					for(int i = xInicial; i < xFinal ; i++) {
+						for(int j = yInicial; j < yFinal; j++) {
+							// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
+							//System.out.println("("+i+","+j+")->"+Mapa.getInstancia().getMapa()[i][j]);
+							if(Mapa.getInstancia().getMapa()[i][j] == 1) {
+								System.out.println(obj);
+								if(obj.equalsIgnoreCase("R")) {
+									estado = "encontrado";
+									bombaX = i;
+									bombaY = j;
+									System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
+								}
+								break;
 							}
-
+							//System.out.println("Agente "+nombre+" reviso la "+zona+" ("+i+","+j+") y esta "+estado);
+						}
+						if(estado.equalsIgnoreCase("encontrado") || estado.equalsIgnoreCase("desactivado")) {
 							break;
 						}
-						//System.out.println("Agente "+nombre+" reviso la "+zona+" ("+i+","+j+") y esta "+estado);
 					}
-					if(estado.equalsIgnoreCase("encontrado") || estado.equalsIgnoreCase("desactivado")) {
-						break;
-					}
+					addBehaviour(new notificarEstado());
 				}
-				addBehaviour(new notificarEstado());
+				MessageTemplate mti = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+				msg = myAgent.receive(mti);
+				if(msg!= null) {
+
+					if(msg.getPerformative() == ACLMessage.INFORM) {
+						System.out.println(nombre + " desactivo la bomba");
+						estado = "desactivado";
+						addBehaviour(new notificarEstado());
+					}
+	
+				}
 			}else {
 				block();
-			}// Se inicia el comportamienteo Noticar Estado.
+			}
+			// Se inicia el comportamienteo Noticar Estado.
 		}
 	} // Fin de la clase Revisar Perimetro
 
