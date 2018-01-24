@@ -1,23 +1,42 @@
 import java.util.Scanner;
-
+/**
+ * Clase sistema que se encarga de obtener el largo y el ancho del mapa y la cantidad de zonas
+ * Crear la mision y de enviarselo al lider del programa.
+ * @author Baldo Morales
+ * @author Kevin Araya
+ * @author Joaquin Solano
+ */
 public class Sistema {
+	// Mision del programa que contiene el mapa y el objetivo
 	private Mision mision;
+	
+	// Largo del mapa que indica la cantidad de filas
 	private int largoMapa;
+	
+	// Ancho del mapa que indica la cantidad de columnas
 	private int anchoMapa;
+	
+	// Variable que indica la cantidad de zonas en el mapa
 	private int sectores;
 	
-	private AgenteLider lider;
-	
 	public Sistema(AgenteLider lid) {
-		this.lider = lid;
+
 		System.out.println("Iniciando Sistema SWAT");
 		Scanner entrada = new Scanner (System.in);
+		
+		// Obtener el largo del mapa
 		System.out.println("Inserte el largo del mapa:");
 		largoMapa = entrada.nextInt();
+		
+		// Obtener el ancho del mapa
 		System.out.println("Inserte el ancho del mapa:");
 		anchoMapa = entrada.nextInt();
+		
+		// Obtener la cantidad de zonas
 		System.out.println("Inserte la cantidad de sectores del mapa:");
-		sectores = entrada.nextInt();		
+		sectores = entrada.nextInt();	
+		
+		// Cear la mision entregando los parametros ingresados por pantallas
 		mision = new Mision(largoMapa, anchoMapa, sectores);
 		
 		/**
