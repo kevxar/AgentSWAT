@@ -67,11 +67,10 @@ public class AgenteUnidad extends Agent {
 			if(msg!=null) {
 				ACLMessage respuesta = msg.createReply();
 				respuesta.setPerformative(ACLMessage.CONFIRM);
-				respuesta.setContent("si");
-				System.out.println("Unidad: "+nombre+" disponible para la mision.");			
+				respuesta.setContent("si");			
 				myAgent.send(respuesta);
 			}else {
-				//block();
+				block();
 			}
 		}
 
