@@ -22,30 +22,36 @@ public class Mapa {
 	// Matriz del mapa en donde se posicionaran la bomba
 	private int[][] mapa;
 	
-	//Instancia de la clase Mapa
+	// Instancia de la clase Mapa
 	private static Mapa instancia = null;
+	
 	/**
 	 * Constructor de la clase Mapa
-	 * @param filas que es el largo del mapa
-	 * @param columnas que es el ancho del mapa 
-	 * @param listaCoordenadas que especifica la cantidad de zonas que tiene el mapa
-	 * @param mapa
 	 */
-	
 	private Mapa() {
 		
 	}
-	
+	/**
+	 * Metodo Set Mapa para cambiar los parametros del Mapa
+	 * @param filas largo del mapa
+	 * @param columnas ancho del mapa
+	 * @param cantidadZonas
+	 */
 	public void setMapa(int filas, int columnas, int cantidadZonas) {
 		
 		this.filas = filas;
 		this.columnas = columnas;
 		this.listaCoordenadas = new Zona[cantidadZonas];
 		this.mapa = new int[filas][columnas];
+		// Se proce a rellenar el mapa y en dividir en zonas
 		rellenarMapa();
 		dividirEnZonas();
 	}
 	
+	/**
+	 * Sincroniza el mapa instanciado cuando lo llaman
+	 * @return instancia que es el mapa sincronizado
+	 */
 	public synchronized static Mapa getInstancia() {
         if (instancia == null) {            
                 if (instancia == null) {
@@ -80,34 +86,52 @@ public class Mapa {
 	
 	/**
 	 * Metodo Dividir en Zonas que se encarga de
-	 * agregar Coordenas a la lista de Zonas
+	 * agregar Coordenadas a la lista de Zonas
 	 */
 	private void dividirEnZonas() {
+		// Se crea una cola para hacer la division de Zonas de acuerdo al orden de llegada
 		Queue<Zona> cola = new LinkedList<Zona>();
+		
+		// Variable que indica la cantidad de zonas que se tiene hasta el momento
 		int cantidadHabitacionesTotales = 1;
-		Zona zona = new Zona("1",0,columnas,0,filas);
+		
+		// Se crea la primera zona inicial y se agrega a la cola
+		Zona zona = new Zona("0",0,columnas,0,filas);
 		cola.add(zona);
+		
+		// Variable para la condicion de la division de las zonas por fila y columna
 		int cont = 0; int pos = 1; int fina = 1;
 		boolean esColumna = true;
+		
+		// Se crean habitaciones hasta que se obtenga la cantidad de habitaciones que se quiera
 		while(cantidadHabitacionesTotales != listaCoordenadas.length) {
+			
+			// Se saca de la cola el ultimo elemento en agregarse
 			Zona zona2 = cola.poll();
+			
+			// Se divide en columna o por fila de forma porporcional
 			if(esColumna) {
 				int mitad = (zona2.getZonaXFinal()-zona2.getZonaXInicial())/2;
+				
+				// Este if se encarga en los casos que las diviciones sean con decimales, lo que significa que la division es impar
 				int arr = 0;
 				if(((double) (zona2.getZonaXFinal()-zona2.getZonaXInicial())/2) -((double) mitad) > 0.0 ) {
 					arr = 1;
 				}
-
-				Zona Aux1 = new Zona("2",
+				
+				// Se crean las dos nuevas zonas de la matriz
+				Zona Aux1 = new Zona("0",
 						zona2.getZonaXInicial(),
 						zona2.getZonaXFinal()-mitad,
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal());
-				Zona Aux2 = new Zona("3",
+				Zona Aux2 = new Zona("0",
 						zona2.getZonaXInicial()+mitad+arr,
 						zona2.getZonaXFinal(),
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal());
+				
+				//Condicion para que la divisiones en cada zona sea equitativo con respecto a la fila y columna 
 				if(pos>=fina) {
 					esColumna = false;
 					cont++;
@@ -116,25 +140,35 @@ public class Mapa {
 					pos++;
 				}
 				arr = 0;
+				
+				//Se agregan a la cola
 				cola.add(Aux1);
 				cola.add(Aux2);
-				cantidadHabitacionesTotales++;
+				
+				//Aumenta el contado en 1 ya que se resta 1 por la cola pero se suma dos nuevas, entonces el total es 1
+				cantidadHabitacionesTotales++; 
 			} else {
 				int mitad = (zona2.getZonaYFinal()-zona2.getZonaYInicial())/2;
 				int arr = 0;
+				
+				//Este if se encarga en los casos que las diviciones sean con decimales, lo que significa que la division es impar
 				if(((double) (zona2.getZonaYFinal()-zona2.getZonaYInicial())/2) -((double) mitad) > 0.0 ) {
 					arr = 1;
 				}
-				Zona Aux1 = new Zona("4",
+				
+				// Se crean las dos nuevas zonas de la matriz
+				Zona Aux1 = new Zona("0",
 						zona2.getZonaXInicial(),
 						zona2.getZonaXFinal(),
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal()-mitad);
-				Zona Aux2 = new Zona("5",
+				Zona Aux2 = new Zona("0",
 						zona2.getZonaXInicial(),
 						zona2.getZonaXFinal(),
 						zona2.getZonaYInicial()+mitad+arr,
 						zona2.getZonaYFinal());
+				
+				//Condicion para que la divisiones en cada zona sea equitativo con respecto a la fila y columna 
 				if(pos>=fina) {
 					esColumna = false;
 					cont++;
@@ -143,14 +177,21 @@ public class Mapa {
 					pos++;
 				}
 				arr = 0;
+				
+				//Se agregan a la cola
 				cola.add(Aux1);
 				cola.add(Aux2);
+				
+				//Aumenta el contado en 1 ya que se resta 1 por la cola pero se suma dos nuevas, entonces el total es 1
 				cantidadHabitacionesTotales++;
 			}
 		}
+		
+		//Guarda las zonas en la listas
 		for(int i = 0; i < this.listaCoordenadas.length; i++) {
 			listaCoordenadas[i] = cola.poll();
 		}
+		
 		//Setea el nombre de todas las zonas, partiendo en zona1
 		for(int i = 0; i < this.listaCoordenadas.length; i++) {
 			listaCoordenadas[i].setNombre("zona"+(i+1));
@@ -204,7 +245,11 @@ public class Mapa {
 	public void setListaCoordenadas(Zona[] listaCoordenadas) {
 		this.listaCoordenadas = listaCoordenadas;
 	}
-
+	
+	/**
+	 * Metodo para obtener la matriz del mapa
+	 * @return
+	 */
 	public int[][] getMapa() {
 		return this.mapa;
 	}
