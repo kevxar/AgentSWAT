@@ -10,16 +10,19 @@ public class Sistema {
 	
 	public Sistema(AgenteLider lid) {
 		this.lider = lid;
-		System.out.println("Sistema SWAT");
+		System.out.println("Iniciando Sistema SWAT");
 		Scanner entrada = new Scanner (System.in);
-		System.out.println("inserte el largo del mapa:");
+		System.out.println("Inserte el largo del mapa:");
 		largoMapa = entrada.nextInt();
-		System.out.println("inserte el ancho del mapa:");
+		System.out.println("Inserte el ancho del mapa:");
 		anchoMapa = entrada.nextInt();
-		System.out.println("inserte la cantidad de sectores del mapa:");
+		System.out.println("Inserte la cantidad de sectores del mapa:");
 		sectores = entrada.nextInt();		
 		mision = new Mision(largoMapa, anchoMapa, sectores);
 		
+		/**
+		 *Metodo que muestra las dimensiones de la matriz y sus respectivas zonas. 
+		 * 		
 		int [][] matriz = new int[anchoMapa][largoMapa];
 		for(int k=0; k < mision.getMapa().getListaCoordenadas().length; k++) {
 			Zona zona = mision.getMapa().getListaCoordenadas()[k];
@@ -35,6 +38,8 @@ public class Sistema {
 				System.out.print(" "+matriz[i][j]);
 			}
 		}
+		**/
+		//Le manda la mision al Lider.
 		lid.obtenerMision(mision);
 		
 		

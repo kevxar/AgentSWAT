@@ -117,7 +117,6 @@ public class AgenteUnidad extends Agent {
 									myAgent.send(respuesta);
 									break;
 							}
-							//System.out.println("Agente "+nombre+" reviso la "+zona+" ("+i+","+j+") y esta "+estado);
 						}
 						if(estado.equalsIgnoreCase("encontrado")) {
 							break;
@@ -143,10 +142,6 @@ public class AgenteUnidad extends Agent {
 		public void action() {
 			System.out.println("Se procede a notificar");
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-			//ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-			//inform.addReceiver(new AID("Lider", AID.ISLOCALNAME));
-			//inform.setContent(estado);
-			//send(inform);
 			ACLMessage informacion = myAgent.receive(mt);
 			if(informacion != null) {
 				String coordenadas = informacion.getContent();
