@@ -22,11 +22,15 @@ import jade.lang.acl.*;
  * @author Joaquin Solano
  */
 public class AgenteLider extends Agent {
+	//Objeto sistema el cual permitira obtener la mision
 	private Sistema sistema;
+	//Mision para el equipo, contiene mapa y objetivo
 	private Mision mision;
+	//Arreglo de zonas
 	private Zona[] listaCoordenadas;
+	//GUI para equipo SWAT
 	private SwatGui gui;
-	private String nombre;
+	//Arreglo de agentesID que guardara las unidades disponibles.
 	private AID[] listaUnidades;
 
 	/**
@@ -146,7 +150,6 @@ public class AgenteLider extends Agent {
 	 * Luego le da paso al comportamiento de ReunirUnidad.
 	 */
 	private class DistribuirUnidades extends OneShotBehaviour {
-		private int contadorRespuestas = 0; 
 		private MessageTemplate mt; 
 
 		public void action() {
@@ -164,9 +167,10 @@ public class AgenteLider extends Agent {
 				String coordenadas = listaCoordenadas[i].getNombre()+","+listaCoordenadas[i].getZonaXInicial()+","+listaCoordenadas[i].getZonaYInicial()+","+listaCoordenadas[i].getZonaXFinal()+","+listaCoordenadas[i].getZonaYFinal();
 				//Seteo el contenido del mensaje con la zona 
 				req.setContent(coordenadas);
-
+				//Se ajustan algunas propiedades del mensaje
 				req.setConversationId("envio-zona");
 				req.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
+				//Se envia el mensaje
 				myAgent.send(req);
 			}
 			// Preparo el template para obtener respuesta
