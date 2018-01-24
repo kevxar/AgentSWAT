@@ -90,51 +90,42 @@ public class AgenteUnidad extends Agent {
 			ACLMessage msg = myAgent.receive(mt);
 			// Se verifica si el mensaje esta vacio.
 			if(msg != null) {
-				if(msg.getPerformative() == ACLMessage.REQUEST) {
+				
 					String coordenadas = msg.getContent();
+					System.out.println(nombre+" recibe "+coordenadas);
 					String[] partes = coordenadas.split(",");
 					String zona = partes[0];
 					int xInicial = Integer.parseInt(partes[1]);
 					int yInicial = Integer.parseInt(partes[2]);
 					int xFinal = Integer.parseInt(partes[3]);
 					int yFinal = Integer.parseInt(partes[4]);
-					String obj = partes[5];
+
 					// Se inicia el estado como despejado.
 					estado = "despejado";
-
 					for(int i = xInicial; i < xFinal ; i++) {
 						for(int j = yInicial; j < yFinal; j++) {
 							// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
 							//System.out.println("("+i+","+j+")->"+Mapa.getInstancia().getMapa()[i][j]);
-							if(Mapa.getInstancia().getMapa()[i][j] == 1) {
-								System.out.println(obj);
-								if(obj.equalsIgnoreCase("R")) {
+							if(Mapa.getInstancia().getMapa()[j][i] == 1) {
 									estado = "encontrado";
 									bombaX = i;
 									bombaY = j;
 									System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
-								}
-								break;
+									ACLMessage respuesta = msg.createReply();
+									respuesta.setPerformative(ACLMessage.INFORM);
+									respuesta.setContent(estado);
+									myAgent.send(respuesta);
+									break;
 							}
 							//System.out.println("Agente "+nombre+" reviso la "+zona+" ("+i+","+j+") y esta "+estado);
 						}
-						if(estado.equalsIgnoreCase("encontrado") || estado.equalsIgnoreCase("desactivado")) {
+						if(estado.equalsIgnoreCase("encontrado")) {
 							break;
 						}
 					}
+					System.out.println(nombre+ " termino de recorrer la " + zona);
 					addBehaviour(new notificarEstado());
-				}
-				MessageTemplate mti = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-				msg = myAgent.receive(mti);
-				if(msg!= null) {
-
-					if(msg.getPerformative() == ACLMessage.INFORM) {
-						System.out.println(nombre + " desactivo la bomba");
-						estado = "desactivado";
-						addBehaviour(new notificarEstado());
-					}
-	
-				}
+				
 			}else {
 				block();
 			}
@@ -148,15 +139,32 @@ public class AgenteUnidad extends Agent {
 	 * @author Baldo Morales
 	 *
 	 */
-	private class notificarEstado extends OneShotBehaviour{ 
+	private class notificarEstado extends CyclicBehaviour{ 
 		public void action() {
 			System.out.println("Se procede a notificar");
-			ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-			inform.addReceiver(new AID("Lider", AID.ISLOCALNAME));
-			inform.setContent(estado);
-			send(inform);
-			if(estado.equalsIgnoreCase("desactivado")) {
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+			//ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
+			//inform.addReceiver(new AID("Lider", AID.ISLOCALNAME));
+			//inform.setContent(estado);
+			//send(inform);
+			ACLMessage informacion = myAgent.receive(mt);
+			if(informacion != null) {
+				String coordenadas = informacion.getContent();
+				String[] partes = coordenadas.split(",");
+				String zona = partes[0];
+				int xInicial = Integer.parseInt(partes[1]);
+				int yInicial = Integer.parseInt(partes[2]);
+				int xFinal = Integer.parseInt(partes[3]);
+				int yFinal = Integer.parseInt(partes[4]);
+				System.out.println("La bomba en la " + zona + " fue desactivada por la " +nombre+ " ." );
+				ACLMessage respuesta = informacion.createReply();
+				respuesta.setPerformative(ACLMessage.INFORM);
+				estado = "desactivado";
+				respuesta.setContent(estado);
+				myAgent.send(respuesta);
 				doDelete();
+			}else {
+				block();
 			}
 		}
 	} // Fin de la clase Notificar Estado

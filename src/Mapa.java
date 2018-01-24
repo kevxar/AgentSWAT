@@ -93,13 +93,18 @@ public class Mapa {
 			Zona zona2 = cola.poll();
 			if(esColumna) {
 				int mitad = (zona2.getZonaXFinal()-zona2.getZonaXInicial())/2;
+				int arr = 0;
+				if(((double) (zona2.getZonaXFinal()-zona2.getZonaXInicial())/2) -((double) mitad) > 0.0 ) {
+					arr = 1;
+				}
+
 				Zona Aux1 = new Zona("2",
 						zona2.getZonaXInicial(),
 						zona2.getZonaXFinal()-mitad,
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal());
 				Zona Aux2 = new Zona("3",
-						zona2.getZonaXInicial()+mitad+1,
+						zona2.getZonaXInicial()+mitad+arr,
 						zona2.getZonaXFinal(),
 						zona2.getZonaYInicial(),
 						zona2.getZonaYFinal());
@@ -110,12 +115,16 @@ public class Mapa {
 				} else {
 					pos++;
 				}
-				
+				arr = 0;
 				cola.add(Aux1);
 				cola.add(Aux2);
 				cantidadHabitacionesTotales++;
 			} else {
 				int mitad = (zona2.getZonaYFinal()-zona2.getZonaYInicial())/2;
+				int arr = 0;
+				if(((double) (zona2.getZonaYFinal()-zona2.getZonaYInicial())/2) -((double) mitad) > 0.0 ) {
+					arr = 1;
+				}
 				Zona Aux1 = new Zona("4",
 						zona2.getZonaXInicial(),
 						zona2.getZonaXFinal(),
@@ -124,7 +133,7 @@ public class Mapa {
 				Zona Aux2 = new Zona("5",
 						zona2.getZonaXInicial(),
 						zona2.getZonaXFinal(),
-						zona2.getZonaYInicial()+mitad+1,
+						zona2.getZonaYInicial()+mitad+arr,
 						zona2.getZonaYFinal());
 				if(pos>=fina) {
 					esColumna = false;
@@ -133,6 +142,7 @@ public class Mapa {
 				} else {
 					pos++;
 				}
+				arr = 0;
 				cola.add(Aux1);
 				cola.add(Aux2);
 				cantidadHabitacionesTotales++;
