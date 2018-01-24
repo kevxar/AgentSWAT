@@ -106,13 +106,13 @@ public class AgenteUnidad extends Agent {
 					int yFinal = Integer.parseInt(partes[4]);
 
 					// Se inicia el estado como despejado.
-					estado = "despejado";
+					estado = "despejado,"+zona;
 					for(int i = xInicial; i < xFinal ; i++) {
 						for(int j = yInicial; j < yFinal; j++) {
 							// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
 							doWait(1000);
 							if(Mapa.getInstancia().getMapa()[j][i] == 1) {
-									estado = "encontrado";
+									estado = "encontrado,"+zona;
 									bombaX = i;
 									bombaY = j;
 									System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
@@ -130,7 +130,6 @@ public class AgenteUnidad extends Agent {
 					respuesta.setContent(estado);
 					myAgent.send(respuesta);
 					System.out.println(nombre + " notifica que la zona estaba " + estado);
-					System.out.println(nombre+ " termino de recorrer la " + zona);
 					addBehaviour(new notificarEstado());
 			}else {
 				block();
@@ -155,12 +154,12 @@ public class AgenteUnidad extends Agent {
 				int yInicial = Integer.parseInt(partes[2]);
 				int xFinal = Integer.parseInt(partes[3]);
 				int yFinal = Integer.parseInt(partes[4]);
-				System.out.println("La bomba en la " + zona + " fue desactivada por la " +nombre+ " ." );
+				doWait(5000);
+				System.out.println("La bomba en la " + zona + " fue desactivada por la " +nombre+ "." );
 				ACLMessage respuesta = informacion.createReply();
 				respuesta.setPerformative(ACLMessage.INFORM);
-				estado = "desactivado";
+				estado = "desactivado,"+zona;
 				respuesta.setContent(estado);
-				doWait(5000);
 				myAgent.send(respuesta);
 				doDelete();
 			}else {

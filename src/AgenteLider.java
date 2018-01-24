@@ -55,7 +55,9 @@ public class AgenteLider extends Agent {
 				mision = mis;	
 				listaCoordenadas = mision.getMapa().getListaCoordenadas();
 				System.out.println("He obtenido la misión!");
-				System.out.println("Las coordenadas de las zonas son:");
+				JOptionPane.showMessageDialog(null,"Mision: "+mis.getobjetivo().getNombre());
+				JOptionPane.showMessageDialog(null,"Descripcion: "+mis.getobjetivo().getDescripcion());
+				System.out.println("El lider ha dividido el mapa en las siguientes coordenadas: ");
 
 				for(int i=0;i<listaCoordenadas.length;i++) {
 					System.out.print(listaCoordenadas[i].getNombre()+ ": x inicial: "+ (listaCoordenadas[i].getZonaXInicial()+1)+"  ");
@@ -187,46 +189,54 @@ public class AgenteLider extends Agent {
 	 */
 	private class ReunirUnidad extends CyclicBehaviour {
 		private int cont = 0;
+		private int paso = 0;
+		private int unidadLista = 0;
+		int posicion = 0;
+		String zona = "";
+		boolean mandado = false;
 		public void action() {
-			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-			ACLMessage respuesta = myAgent.receive(mt);
-			if(respuesta != null) {
-				// Se recibe el mensaje y se procesa
-				String estado = respuesta.getContent();
-				int posicion=0;
-				if(estado.equalsIgnoreCase("encontrado")) {
-					AID unidad = respuesta.getSender();
-					String nombre = unidad.getLocalName();
-
-					//Se busca el nombre de la unidad que envio el estado de la zona
-					for(int i=0; i< listaUnidades.length;i++) {
-						if(nombre.equalsIgnoreCase(listaUnidades[i].getLocalName())) {
-							posicion = i;
-							break;
+				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
+				ACLMessage respuesta = myAgent.receive(mt);
+				if(respuesta != null) {
+					// Se recibe el mensaje y se procesa
+					String contenido = respuesta.getContent();
+					String[] partes = contenido.split(",");
+					String estado = partes[0];
+					zona = partes[1];
+					if(estado.equalsIgnoreCase("despejado")) {
+						unidadLista++;
+					}else if(estado.equalsIgnoreCase("encontrado")) {
+						//Se busca el nombre de la unidad que envio el estado de la zona
+						for(int i=0; i< listaCoordenadas.length;i++) {
+							if(zona.equalsIgnoreCase(listaCoordenadas[i].getNombre())) {
+								posicion = i;
+								break;
+							}
 						}
-					}
-					for(int i=0; i<listaUnidades.length;i++) {
-						ACLMessage reply = respuesta.createReply();
-						reply.setPerformative(ACLMessage.INFORM);
-						reply.addReceiver(listaUnidades[i]);
-						String coordenadas = listaCoordenadas[posicion].getNombre()+","+listaCoordenadas[posicion].getZonaXInicial()+","+listaCoordenadas[posicion].getZonaYInicial()+","+listaCoordenadas[posicion].getZonaXFinal()+","+listaCoordenadas[posicion].getZonaYFinal();
-						//Seteo el contenido del mensaje con la zona 
-						reply.setContent(coordenadas);
-
-						reply.setConversationId("envio-zona");
-						reply.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
-						myAgent.send(reply);
-					}
-				}else 
-					if(estado.equalsIgnoreCase("desactivado")) {
+					}else if(estado.equalsIgnoreCase("desactivado")) {
 						cont++;
 						if(cont == listaCoordenadas.length) {
 							addBehaviour(new ReportarMision());
 						}	
 					}
-			}else {
-				block();
-			}
+					if((unidadLista == listaCoordenadas.length-1) && !mandado) {
+						for(int i=0; i<listaUnidades.length;i++) {
+							ACLMessage reply = respuesta.createReply();
+							reply.setPerformative(ACLMessage.INFORM);
+							reply.addReceiver(listaUnidades[i]);
+							String coordenadas = listaCoordenadas[posicion].getNombre()+","+listaCoordenadas[posicion].getZonaXInicial()+","+listaCoordenadas[posicion].getZonaYInicial()+","+listaCoordenadas[posicion].getZonaXFinal()+","+listaCoordenadas[posicion].getZonaYFinal();
+							//Seteo el contenido del mensaje con la zona 
+							reply.setContent(coordenadas);
+
+							reply.setConversationId("envio-zona");
+							reply.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
+							myAgent.send(reply);
+						}
+						mandado = true;
+					}
+				}else {
+					block();
+				}
 		}
 	}
 
@@ -237,7 +247,7 @@ public class AgenteLider extends Agent {
 	private class ReportarMision extends OneShotBehaviour{
 
 		public void action() {
-			//JOptionPane.showMessageDialog(null,"La misión ha terminado :D! ");
+			JOptionPane.showMessageDialog(null,"¡La misión ha terminado! ");
 			doDelete();
 		}
 

@@ -28,6 +28,7 @@ public class Objetivo {
 		this.descripcion = "Se le mandara la mision al lider, y el lider se encargara de distribuir las zonas y ordenar a desactivar la bomba.";
 	}
 	
+	
 	/**
 	 * Metodo para obtener la coordenada X
 	 * @return x que es la coordenada de la fila
@@ -38,10 +39,26 @@ public class Objetivo {
 	
 	/**
 	 * Metodo para obtener la coordenada y
-	 * @return y que es la coordenafa de la columna
+	 * @return y que es la coordenada de la columna
 	 */
 	public int getCoorY() {
 		return this.y;
 	}
 	
+	/**
+	 * Obtener el tipo de objetivo de la mision
+	 * @return nombre
+	 */
+	public String getNombre() {
+		return nombre;
+	}
+
+	/**
+	 * Obtener la descripcion de la mision
+	 * @return
+	 */
+	public String getDescripcion() {
+		return descripcion;
+	}
+
 }
