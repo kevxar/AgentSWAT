@@ -21,14 +21,14 @@ import jade.lang.acl.UnreadableException;
 public class AgenteUnidad extends Agent {
 	// Variable nombre que contiene el nombre del agente.
 	private String nombre;
-	
+
 	// Variable estado que contiene los 3 estados del agente "despejado", "encontrado" y "desactivado".
 	private String estado;
-	
+
 	//Variables que guardan coordenadas de la bomba
 	private int bombaX;
 	private int bombaY;
-	
+
 	/**
 	 * Setup que inicializa el agente Unidad.
 	 */
@@ -49,6 +49,8 @@ public class AgenteUnidad extends Agent {
 		}
 		System.out.println("Unidad: "+nombre+" disponible para la mision.");
 		addBehaviour(new revisarPerimetro());
+		addBehaviour(new respuestaInstancia());
+
 	}
 	/**
 	 * Cuando el Agente manda un mensaje al irse
@@ -56,6 +58,25 @@ public class AgenteUnidad extends Agent {
 	protected void takeDown() {
 		System.out.println("Unidad: "+nombre+" termina su servicio.");
 	}
+
+	private class respuestaInstancia extends CyclicBehaviour{
+
+		public void action() {
+			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+			ACLMessage msg = myAgent.receive(mt);
+			if(msg!=null) {
+				ACLMessage respuesta = msg.createReply();
+				respuesta.setPerformative(ACLMessage.CONFIRM);
+				respuesta.setContent("si");
+				System.out.println("Unidad: "+nombre+" disponible para la mision.");			
+				myAgent.send(respuesta);
+			}else {
+				//block();
+			}
+		}
+
+	}
+
 	/**
 	 * Clase Revisar Perimetro que es un comportamiento
 	 * ciclico que espera una solicitud del lider,
@@ -66,7 +87,6 @@ public class AgenteUnidad extends Agent {
 	 */
 	private class revisarPerimetro extends CyclicBehaviour{
 		public void action() {
-			System.out.println("A " + nombre + " le llego un mensaje");
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 			ACLMessage msg = myAgent.receive(mt);
 			// Se verifica si el mensaje esta vacio.
@@ -78,35 +98,43 @@ public class AgenteUnidad extends Agent {
 				int yInicial = Integer.parseInt(partes[2]);
 				int xFinal = Integer.parseInt(partes[3]);
 				int yFinal = Integer.parseInt(partes[4]);
+				String obj = partes[5];
 				// Se inicia el estado como despejado.
 				estado = "despejado";
-				
+
 				for(int i = xInicial; i < xFinal ; i++) {
 					for(int j = yInicial; j < yFinal; j++) {
 						// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
+						//System.out.println("("+i+","+j+")->"+Mapa.getInstancia().getMapa()[i][j]);
 						if(Mapa.getInstancia().getMapa()[i][j] == 1) {
-							estado = "encontrado";
-							bombaX = i;
-							bombaY = j;
-							System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
-							
+							System.out.println(obj);
+							if(obj.equalsIgnoreCase("R")) {
+								estado = "encontrado";
+								bombaX = i;
+								bombaY = j;
+								System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
+							} else {
+								estado = "desactivado";
+								bombaX = i;
+								bombaY = j;
+								System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y desactivo la bomba");
+							}
+
 							break;
 						}
-						System.out.println("Agente "+nombre+" reviso la zona ("+i+","+j+") y esta "+estado);
+						//System.out.println("Agente "+nombre+" reviso la "+zona+" ("+i+","+j+") y esta "+estado);
 					}
-					if(estado == "encontrado") break;
+					if(estado.equalsIgnoreCase("encontrado") || estado.equalsIgnoreCase("desactivado")) {
+						break;
+					}
 				}
-				
-				// Se inicia el comportamienteo Noticar Estado.
 				addBehaviour(new notificarEstado());
-				
 			}else {
 				block();
-			}
-			
+			}// Se inicia el comportamienteo Noticar Estado.
 		}
 	} // Fin de la clase Revisar Perimetro
-	
+
 	/**
 	 * Clase Notificar Estado que informa al lider con el String estado,
 	 * solo se realiza una vez cada vez que se revisa el perimetro.
@@ -120,8 +148,9 @@ public class AgenteUnidad extends Agent {
 			inform.addReceiver(new AID("Lider", AID.ISLOCALNAME));
 			inform.setContent(estado);
 			send(inform);
+			if(estado.equalsIgnoreCase("desactivado")) {
+				doDelete();
+			}
 		}
 	} // Fin de la clase Notificar Estado
-	
-	
 }

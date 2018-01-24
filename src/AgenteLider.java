@@ -63,52 +63,57 @@ public class AgenteLider extends Agent {
 	}
 	
 	
-	private class ReclutarUnidad extends OneShotBehaviour{
-
-		private ReceiverBehaviour be;
+	private class ReclutarUnidad extends Behaviour{
+		private int cont = 0;
+		private int paso = 0;
+		private boolean respondio = false;
 		public void action() {
-		
-			DFAgentDescription template = new DFAgentDescription();
-			ServiceDescription sd = new ServiceDescription();
-			sd.setType("unidad-swat");
-			template.addServices(sd);
-			
-				
-				for(int j = 0;j<listaCoordenadas.length;j++) {
-					//AID nuevo = new AID("unidad"+(j+1),AID.ISLOCALNAME);
-					//listaUnidades[j] = nuevo;					
-					try {					
-			    		getContainerController().createNewAgent("unidad"+(j+1), "AgenteUnidad", null ).start();
-			    		System.out.println("+++ Created: " +"unidad"+(j+1));	
-			    	}
-			    	catch (Exception e){}
-
+			switch (paso) {
+			case 0:
+				for(int j = 0;j<listaCoordenadas.length;j++) {			
+				try {					
+					getContainerController().createNewAgent("unidad"+(j+1), "AgenteUnidad", null ).start();	
+			    }
+			    catch (Exception e){}
 				}
-				int cont = 0;
-				for(int i=0;i<listaCoordenadas.length;i++) {
-					MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+				
+				paso = 1;
+				break;
+			case 1:
+				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
+				if(!respondio) {
+					
 					ACLMessage req = new ACLMessage(ACLMessage.CONFIRM);
 					req.setContent("Listo");
-					req.addReceiver(new AID ("unidad"+(i+1),AID.ISLOCALNAME));
+					req.addReceiver(new AID ("unidad"+(cont+1),AID.ISLOCALNAME));
 					req.setConversationId("iniciacion");
 		    		req.setReplyWith("si");
 		    		myAgent.send(req);
-		    		
-		    		ACLMessage respuesta = myAgent.receive(mt);
-		    		if(respuesta!=null) {
-		    			cont++;
-		    			System.out.println(cont);
-					}
+		    		respondio = true;
 				}
 				
-				if(cont == listaCoordenadas.length) {
+	    		
+	    		ACLMessage respuesta = myAgent.receive(mt);
+	    		if(respuesta!=null) {
+	    			cont++;
+	    			respondio = false;
+				}
+	    		if(cont == listaCoordenadas.length) {	
+	    			paso = 2;
+	    		}
+	    		break;
+			case 2:
+				DFAgentDescription template = new DFAgentDescription();
+				ServiceDescription sd = new ServiceDescription();
+				sd.setType("unidad-swat");
+				template.addServices(sd);
+				
 					try {
 	    				DFAgentDescription[] result = DFService.search(myAgent, template);
 	    				System.out.println("Se encontraron " + result.length + " agentes unidades:");
 	    				listaUnidades = new AID[result.length];
 	    				for(int i = 0; i < result.length ; i++) {
 	    					listaUnidades[i] = result[i].getName();
-	    					System.out.println("PRUEBA Nombre nuevo" + listaUnidades[i].getName());
 	    				}
 	    			} catch (FIPAException e) {
 
@@ -116,8 +121,15 @@ public class AgenteLider extends Agent {
 	    			}
 	    			// Perform the request
 	    		myAgent.addBehaviour(new DistribuirUnidades());
-				}
 				
+				paso = 3;
+				break;
+			}
+	
+		}
+		@Override
+		public boolean done() {
+			return (paso == 3);
 		}
 		
 	}
@@ -131,22 +143,18 @@ public class AgenteLider extends Agent {
 		
 		public void action() {
 			
-			
-			
 			System.out.println("Comienzo a distribuir las unidades:");
 			// Envia el request a todas las unidades
 			ACLMessage req = new ACLMessage(ACLMessage.REQUEST);
 			
 				for (int i = 0; i < listaCoordenadas.length; ++i) {
 					System.out.println("A unidad numero " + i +":" );
-					//Consulta si la lista de zonas es menor a la lista de unidades
-				
-
+					
 						//Agrego la unidad a la lista de unidades
 						req.addReceiver(listaUnidades[i]);
 						
-						String coordenadas = listaCoordenadas[i].getNombre()+","+listaCoordenadas[i].getZonaXInicial()+","+listaCoordenadas[i].getZonaYInicial()+","+listaCoordenadas[i].getZonaXFinal()+","+listaCoordenadas[i].getZonaYFinal();
-						
+						String coordenadas = listaCoordenadas[i].getNombre()+","+listaCoordenadas[i].getZonaXInicial()+","+listaCoordenadas[i].getZonaYInicial()+","+listaCoordenadas[i].getZonaXFinal()+","+listaCoordenadas[i].getZonaYFinal()+",R";
+						System.out.println(coordenadas);
 						//Seteo el contenido del mensaje con la zona 
 						req.setContent(coordenadas);
 						
@@ -167,16 +175,17 @@ public class AgenteLider extends Agent {
 	}
 	
 	private class ReunirUnidad extends CyclicBehaviour {
-
+		private int cont = 0;
 		public void action() {
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 			ACLMessage respuesta = myAgent.receive(mt);
-			
+			System.out.println("AQUI");
 			if(respuesta != null) {
 				// Se recibe el mensaje y se procesa
 				String estado = respuesta.getContent();
 				int posicion=0;
-				if(estado.equalsIgnoreCase("Encontrado")) {
+				if(estado.equalsIgnoreCase("encontrado")) {
+					System.out.println("encontrado");
 					AID unidad = respuesta.getSender();
 					String nombre = unidad.getLocalName();
 					
@@ -189,24 +198,33 @@ public class AgenteLider extends Agent {
 					}
 					
 					for(int i=0; i<listaUnidades.length;i++) {
-						if(i != posicion) {
-						respuesta.addReceiver(listaUnidades[i]);
+						//if(i != posicion) {
+							System.out.println("mandar");
+							
+							ACLMessage reply = respuesta.createReply();
+							reply.setPerformative(ACLMessage.INFORM);
+							reply.addReceiver(listaUnidades[i]);
+							String coordenadas = listaCoordenadas[posicion].getNombre()+","+listaCoordenadas[posicion].getZonaXInicial()+","+listaCoordenadas[posicion].getZonaYInicial()+","+listaCoordenadas[posicion].getZonaXFinal()+","+listaCoordenadas[posicion].getZonaYFinal()+",D";
+							System.out.println(coordenadas);
+							//Seteo el contenido del mensaje con la zona 
+							reply.setContent(coordenadas);
+							
+							reply.setConversationId("envio-zona");
+							reply.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
+							myAgent.send(reply);
 						
-						String coordenadas = listaCoordenadas[posicion].getNombre()+","+listaCoordenadas[posicion].getZonaXInicial()+","+listaCoordenadas[posicion].getZonaYInicial()+","+listaCoordenadas[posicion].getZonaXFinal()+","+listaCoordenadas[posicion].getZonaYFinal();
-						
-						//Seteo el contenido del mensaje con la zona 
-						respuesta.setContent(coordenadas);
-						
-						respuesta.setConversationId("envio-zona");
-						respuesta.setReplyWith("request"+System.currentTimeMillis()); // Valor unico
-						myAgent.send(respuesta);
-						
-						}
+						//}
 					}
 					
-				}else if(estado.equalsIgnoreCase("Desactivado")) {
-					addBehaviour(new ReportarMision());
+				}else if(estado.equalsIgnoreCase("desactivado")) {
+					System.out.println("desactivado");
+					cont++;
+					if(cont == listaCoordenadas.length) {
+						System.out.println("listo");
+						addBehaviour(new ReportarMision());
+					}
 				}else {
+					System.out.println("Zona limpia");
 					block();
 				}
 					

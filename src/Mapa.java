@@ -143,7 +143,7 @@ public class Mapa {
 		}
 		//Setea el nombre de todas las zonas, partiendo en zona1
 		for(int i = 0; i < this.listaCoordenadas.length; i++) {
-			listaCoordenadas[i].setNombre("zona"+i+1);
+			listaCoordenadas[i].setNombre("zona"+(i+1));
 		}
 	}
 	
