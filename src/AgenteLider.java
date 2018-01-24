@@ -116,31 +116,35 @@ public class AgenteLider extends Agent {
 				template.addServices(sd);
 
 				try {
+					//Se agregan los DFservices encontrados al arreglo result.
 					DFAgentDescription[] result = DFService.search(myAgent, template);
 					System.out.println("Se encontraron " + result.length + " agentes unidades:");
 					listaUnidades = new AID[result.length];
+					//Se agregan los AID al arreglo listaUnidades.
 					for(int i = 0; i < result.length ; i++) {
 						listaUnidades[i] = result[i].getName();
 					}
 				} catch (FIPAException e) {
-
 					e.printStackTrace();
 				}
 				// Se da paso al comportamiento de distribuir unidades.
 				myAgent.addBehaviour(new DistribuirUnidades());
-
 				paso = 3;
 				break;
 			}
 
 		}
-		@Override
+		//Metodo que da por finalizado este behaviour.
 		public boolean done() {
 			return (paso == 3);
 		}
-
 	}
 
+	/**
+	 * Metodo que esta encargado de dar las coordenadas de cada zona a cada agente.
+	 * Se las envia a traves de un mensaje con performative REQUEST.
+	 * Luego le da paso al comportamiento de ReunirUnidad.
+	 */
 	private class DistribuirUnidades extends OneShotBehaviour {
 		private int contadorRespuestas = 0; 
 		private MessageTemplate mt; 
