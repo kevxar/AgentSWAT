@@ -97,9 +97,9 @@ public class AgenteUnidad extends Agent {
 			if(msg != null) {
 					//Se decodifica el mensaje. en nombre de zona, x1,y1,x2,y2.
 					String coordenadas = msg.getContent();
-					System.out.println(nombre+" recibe "+coordenadas);
 					String[] partes = coordenadas.split(",");
 					String zona = partes[0];
+					System.out.println(nombre+" recibe "+zona);
 					int xInicial = Integer.parseInt(partes[1]);
 					int yInicial = Integer.parseInt(partes[2]);
 					int xFinal = Integer.parseInt(partes[3]);
@@ -110,16 +110,13 @@ public class AgenteUnidad extends Agent {
 					for(int i = xInicial; i < xFinal ; i++) {
 						for(int j = yInicial; j < yFinal; j++) {
 							// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
+							doWait(1000);
 							if(Mapa.getInstancia().getMapa()[j][i] == 1) {
 									estado = "encontrado";
 									bombaX = i;
 									bombaY = j;
 									System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
-									//Se notifica al Lider de que se encontro la bomba.
-									ACLMessage respuesta = msg.createReply();
-									respuesta.setPerformative(ACLMessage.INFORM);
-									respuesta.setContent(estado);
-									myAgent.send(respuesta);
+									
 									break;
 							}
 						}
@@ -127,6 +124,12 @@ public class AgenteUnidad extends Agent {
 							break;
 						}
 					}
+					//Se notifica al Lider de que se encontro la bomba.
+					ACLMessage respuesta = msg.createReply();
+					respuesta.setPerformative(ACLMessage.INFORM);
+					respuesta.setContent(estado);
+					myAgent.send(respuesta);
+					System.out.println(nombre + " notifica que la zona estaba " + estado);
 					System.out.println(nombre+ " termino de recorrer la " + zona);
 					addBehaviour(new notificarEstado());
 			}else {
@@ -140,8 +143,7 @@ public class AgenteUnidad extends Agent {
  	 */
 	private class notificarEstado extends CyclicBehaviour{ 
 		public void action() {
-			//
-			System.out.println("Se procede a notificar");
+			//	
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 			ACLMessage informacion = myAgent.receive(mt);
 			if(informacion != null) {
@@ -158,6 +160,7 @@ public class AgenteUnidad extends Agent {
 				respuesta.setPerformative(ACLMessage.INFORM);
 				estado = "desactivado";
 				respuesta.setContent(estado);
+				doWait(5000);
 				myAgent.send(respuesta);
 				doDelete();
 			}else {

@@ -58,9 +58,9 @@ public class AgenteLider extends Agent {
 				System.out.println("Las coordenadas de las zonas son:");
 
 				for(int i=0;i<listaCoordenadas.length;i++) {
-					System.out.print(listaCoordenadas[i].getNombre()+ ": x inicial: "+ listaCoordenadas[i].getZonaXInicial()+"  ");
+					System.out.print(listaCoordenadas[i].getNombre()+ ": x inicial: "+ (listaCoordenadas[i].getZonaXInicial()+1)+"  ");
 					System.out.print(" x final: "+ listaCoordenadas[i].getZonaXFinal()+"  ");
-					System.out.print(" y inicial: "+ listaCoordenadas[i].getZonaYInicial()+"  ");
+					System.out.print(" y inicial: "+ (listaCoordenadas[i].getZonaYInicial()+1)+"  ");
 					System.out.print(" y final: "+ listaCoordenadas[i].getZonaYFinal()+"  ");
 					System.out.println("");
 				}
@@ -237,7 +237,7 @@ public class AgenteLider extends Agent {
 	private class ReportarMision extends OneShotBehaviour{
 
 		public void action() {
-			JOptionPane.showMessageDialog(null,"La misión ha terminado :D! ");
+			//JOptionPane.showMessageDialog(null,"La misión ha terminado :D! ");
 			doDelete();
 		}
 
