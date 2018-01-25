@@ -1,18 +1,32 @@
 /**
+ * Clase Mision que contiene el mapa y el objetivo del programa
  * @author Baldo Morales
  * @author Kevin Araya
  * @author Joaquin Solano
  */
 public class Mision {
+	// Unico Mapa que contiene la matriz donde se ubica la bomba
 	private Mapa mapa;
+	
+	// Objetivo que contiene la descripcion
 	private Objetivo objetivo;
 	
+	/**
+	 * Constructor de Mision
+	 * @param x largo del mapa
+	 * @param y ancho del mapa
+	 * @param cantidadZonas
+	 */
 	public Mision(int x, int y, int cantidadZonas) {
 		mapa = Mapa.getInstancia();
 		mapa.setMapa(x,y,cantidadZonas);		
 		fijarObjetivo(this.objetivo);
 	}
 	
+	/**
+	 * Metodo fijar objetivo que se encarga de cambiar la posicion de la bomba hasta que se pueda ubicarlo y se crea el Objetivo.
+	 * @param obj
+	 */
 	private void fijarObjetivo(Objetivo obj) {
 		//Se extraen las dimensiones del mapa
 		int x = this.mapa.getFilas();
@@ -32,11 +46,18 @@ public class Mision {
 		this.objetivo = new Objetivo(randomX,randomY);	
 	}
 	
-	
+	/**
+	 * Metodo para obtener el mapa instanciado
+	 * @return mapa instanciada
+	 */
 	public Mapa getMapa() {
 		return this.mapa.getInstancia();
 	}
 	
+	/**
+	 * Metodo para obtener la clase objetivo de la mision
+	 * @return objetivo de la mision
+	 */
 	public Objetivo getobjetivo() {
 		return this.objetivo;
 	}

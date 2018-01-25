@@ -33,7 +33,7 @@ public class AgenteUnidad extends Agent {
 	 * Setup que inicializa el agente Unidad.
 	 */
 	protected void setup() {
-		//perimetro = Mapa.getInstancia().getMapa();
+		//Se agrega el nombre de la unidad.
 		nombre = this.getLocalName();
 		//Se añade el servicio de disponibilidad de Unidad SWAT
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -47,20 +47,28 @@ public class AgenteUnidad extends Agent {
 		}catch(FIPAException fe) {
 			fe.printStackTrace();
 		}
-		System.out.println("Unidad: "+nombre+" disponible para la mision.");
-		addBehaviour(new revisarPerimetro());
+		System.out.println(nombre+": disponible para la mision.");
 		addBehaviour(new respuestaInstancia());
+		//Se da paso al comportamiento que espera el perimetro a revisar
+		addBehaviour(new revisarPerimetro());
+		
+
 
 	}
 	/**
 	 * Cuando el Agente manda un mensaje al irse
 	 */
 	protected void takeDown() {
-		System.out.println("Unidad: "+nombre+" termina su servicio.");
+		System.out.println(nombre+": termina su servicio.");
 	}
 
+	/**
+	 * Metodo que le confirma mediante mensaje al Lider de su reclutamiento.
+	 * El lider mediante un mensaje recluta a la unidad, la cual esta al tanto de su bandeja de mensajes.
+	 * Si no obtiene mensajes de performative confirmar, se bloquea.
+ 	 */
 	private class respuestaInstancia extends CyclicBehaviour{
-
+		
 		public void action() {
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CONFIRM);
 			ACLMessage msg = myAgent.receive(mt);
@@ -73,7 +81,6 @@ public class AgenteUnidad extends Agent {
 				block();
 			}
 		}
-
 	}
 
 	/**
@@ -81,74 +88,65 @@ public class AgenteUnidad extends Agent {
 	 * ciclico que espera una solicitud del lider,
 	 * revisa en una matriz si existe un objeto dentro de las casillas,
 	 * cuando termine la evaluación procedera a notificar el estado.
-	 * @author Baldo Morales
-	 *
-	 */
+ 	 */
 	private class revisarPerimetro extends CyclicBehaviour{
 		public void action() {
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
 			ACLMessage msg = myAgent.receive(mt);
 			// Se verifica si el mensaje esta vacio.
 			if(msg != null) {
-				
+					//Se decodifica el mensaje. en nombre de zona, x1,y1,x2,y2.
 					String coordenadas = msg.getContent();
-					System.out.println(nombre+" recibe "+coordenadas);
 					String[] partes = coordenadas.split(",");
 					String zona = partes[0];
+					System.out.println(nombre+" recibe "+zona);
 					int xInicial = Integer.parseInt(partes[1]);
 					int yInicial = Integer.parseInt(partes[2]);
 					int xFinal = Integer.parseInt(partes[3]);
 					int yFinal = Integer.parseInt(partes[4]);
 
 					// Se inicia el estado como despejado.
-					estado = "despejado";
+					estado = "despejado,"+zona;
 					for(int i = xInicial; i < xFinal ; i++) {
 						for(int j = yInicial; j < yFinal; j++) {
 							// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
-							//System.out.println("("+i+","+j+")->"+Mapa.getInstancia().getMapa()[i][j]);
+							doWait(500);
 							if(Mapa.getInstancia().getMapa()[j][i] == 1) {
-									estado = "encontrado";
+									estado = "encontrado,"+zona;
 									bombaX = i;
 									bombaY = j;
 									System.out.println("Agente "+nombre+" reviso la "+zona + " ("+i+","+j+") y encontro la bomba");
-									ACLMessage respuesta = msg.createReply();
-									respuesta.setPerformative(ACLMessage.INFORM);
-									respuesta.setContent(estado);
-									myAgent.send(respuesta);
+									
 									break;
 							}
-							//System.out.println("Agente "+nombre+" reviso la "+zona+" ("+i+","+j+") y esta "+estado);
 						}
 						if(estado.equalsIgnoreCase("encontrado")) {
 							break;
 						}
 					}
-					System.out.println(nombre+ " termino de recorrer la " + zona);
+					//Se notifica al Lider de que se encontro la bomba.
+					ACLMessage respuesta = msg.createReply();
+					respuesta.setPerformative(ACLMessage.INFORM);
+					respuesta.setContent(estado);
+					myAgent.send(respuesta);
+					System.out.println(nombre + " notifica que la zona estaba " + estado);
 					addBehaviour(new notificarEstado());
-				
 			}else {
 				block();
 			}
-			// Se inicia el comportamienteo Noticar Estado.
 		}
 	} // Fin de la clase Revisar Perimetro
 
 	/**
-	 * Clase Notificar Estado que informa al lider con el String estado,
-	 * solo se realiza una vez cada vez que se revisa el perimetro.
-	 * @author Baldo Morales
-	 *
-	 */
+	 * Clase Notificar Estado que informa al lider con el String estado.
+ 	 */
 	private class notificarEstado extends CyclicBehaviour{ 
 		public void action() {
-			System.out.println("Se procede a notificar");
+			//	
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
-			//ACLMessage inform = new ACLMessage(ACLMessage.INFORM);
-			//inform.addReceiver(new AID("Lider", AID.ISLOCALNAME));
-			//inform.setContent(estado);
-			//send(inform);
 			ACLMessage informacion = myAgent.receive(mt);
 			if(informacion != null) {
+				//Se decodifica el mensaje recibido.
 				String coordenadas = informacion.getContent();
 				String[] partes = coordenadas.split(",");
 				String zona = partes[0];
@@ -156,10 +154,11 @@ public class AgenteUnidad extends Agent {
 				int yInicial = Integer.parseInt(partes[2]);
 				int xFinal = Integer.parseInt(partes[3]);
 				int yFinal = Integer.parseInt(partes[4]);
-				System.out.println("La bomba en la " + zona + " fue desactivada por la " +nombre+ " ." );
+				doWait(1000);
+				System.out.println("La bomba en la " + zona + " fue desactivada por la " +nombre+ "." );
 				ACLMessage respuesta = informacion.createReply();
 				respuesta.setPerformative(ACLMessage.INFORM);
-				estado = "desactivado";
+				estado = "desactivado,"+zona;
 				respuesta.setContent(estado);
 				myAgent.send(respuesta);
 				doDelete();
