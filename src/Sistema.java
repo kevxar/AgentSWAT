@@ -57,6 +57,7 @@ public class Sistema {
 				System.out.print(" "+matriz[i][j]);
 			}
 		}
+		System.out.println();
 		**/
 		//Le manda la mision al Lider.
 		lid.obtenerMision(mision);

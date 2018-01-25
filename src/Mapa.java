@@ -133,7 +133,7 @@ public class Mapa {
 				
 				//Condicion para que la divisiones en cada zona sea equitativo con respecto a la fila y columna 
 				if(pos>=fina) {
-					esColumna = false;
+					esColumna = !esColumna;
 					cont++;
 					fina = (int) Math.pow(2, cont);
 				} else {
@@ -170,7 +170,7 @@ public class Mapa {
 				
 				//Condicion para que la divisiones en cada zona sea equitativo con respecto a la fila y columna 
 				if(pos>=fina) {
-					esColumna = false;
+					esColumna = !esColumna;
 					cont++;
 					fina = (int) Math.pow(2, cont);
 				} else {
