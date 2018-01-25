@@ -189,11 +189,10 @@ public class AgenteLider extends Agent {
 	 */
 	private class ReunirUnidad extends CyclicBehaviour {
 		private int cont = 0;
-		private int paso = 0;
 		private int unidadLista = 0;
-		int posicion = 0;
-		String zona = "";
-		boolean mandado = false;
+		private int posicion = 0;
+		private String zona = "";
+		private boolean mandado = false;
 		public void action() {
 				MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.INFORM);
 				ACLMessage respuesta = myAgent.receive(mt);

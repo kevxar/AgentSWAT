@@ -110,7 +110,7 @@ public class AgenteUnidad extends Agent {
 					for(int i = xInicial; i < xFinal ; i++) {
 						for(int j = yInicial; j < yFinal; j++) {
 							// En caso de encontrar un "1" dentro de la matriz, se cambia el estado a "encontrado" y se sale de inmediato.
-							doWait(1000);
+							doWait(500);
 							if(Mapa.getInstancia().getMapa()[j][i] == 1) {
 									estado = "encontrado,"+zona;
 									bombaX = i;
@@ -154,7 +154,7 @@ public class AgenteUnidad extends Agent {
 				int yInicial = Integer.parseInt(partes[2]);
 				int xFinal = Integer.parseInt(partes[3]);
 				int yFinal = Integer.parseInt(partes[4]);
-				doWait(5000);
+				doWait(1000);
 				System.out.println("La bomba en la " + zona + " fue desactivada por la " +nombre+ "." );
 				ACLMessage respuesta = informacion.createReply();
 				respuesta.setPerformative(ACLMessage.INFORM);
