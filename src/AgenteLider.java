@@ -40,7 +40,6 @@ public class AgenteLider extends Agent {
 		System.out.println("Hola, soy el lider");
 		sistema = new Sistema(this);
 		gui = new SwatGui(this);
-		gui.showGui();
 		addBehaviour(new ReclutarUnidad());
 	}
 	
@@ -260,5 +259,4 @@ public class AgenteLider extends Agent {
 
 		System.out.println(getAID().getLocalName() +" termina sus servicios, equipo SWAT se despide.");
 	}
-
 }

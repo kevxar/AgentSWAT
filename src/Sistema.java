@@ -38,7 +38,13 @@ public class Sistema {
 		
 		// Cear la mision entregando los parametros ingresados por pantallas
 		mision = new Mision(largoMapa, anchoMapa, sectores);
+		//Le manda la mision al Lider.
+		lid.obtenerMision(mision);
 		
+		
+	}	
+	
+	
 		/**
 		 *Metodo que muestra las dimensiones de la matriz y sus respectivas zonas. 
 		 * 		
@@ -57,13 +63,8 @@ public class Sistema {
 				System.out.print(" "+matriz[i][j]);
 			}
 		}
-		System.out.println();
 		**/
-		//Le manda la mision al Lider.
-		lid.obtenerMision(mision);
-		
-		
-	}
+
 	
 	
 	
